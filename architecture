@@ -1,0 +1,57 @@
+■フォルダ構成
+rag_app_groq/
+├── chroma_db/                     ← ベクトルDB（使わないなら空でもOK）
+├── core/                          ← 中核処理（RAG処理の本体）
+│   ├── embedder.py               ← 埋め込みモデルの定義（未使用なら削除可）
+│   ├── qa_chain.py               ← 質問処理（文脈取得＋Groq問い合わせ）
+│   └── vectorstore.py            ← ベクトルDBとのやりとり（未使用なら削除可）
+│
+├── extractors/                    ← ファイルごとの読み取り処理
+│   ├── audio_transcriber.py      ← 音声ファイルから文字起こし（Whisper）
+│   ├── docx_loader.py            ← Word文書の読み取り
+│   ├── image_ocr.py              ← 画像から文字抽出（OCR）
+│   ├── pdf_loader.py             ← PDF読み取り
+│   ├── pptx_loader.py            ← PowerPoint読み取り
+│   ├── xlsx_loader.py            ← Excel読み取り
+│   └── router.py                 ← 拡張子に応じて読み取り関数を呼び分け
+│
+├── services/                      ← 外部サービス連携
+│   └── groq_api.py               ← Groq API呼び出し（LLMへ質問）
+│
+├── web/                           ← Webインターフェース
+│   ├── client_st.py              ← Streamlit UI
+│   └── server_fastapi.py         ← FastAPI サーバー（/upload, /ask）
+│
+├── uploads/                       ← アップロードファイル一時保存先
+│
+├── .env                           ← 環境変数（GROQ_API_KEY）
+├── .gitignore
+├── requirements.txt              ← 必要なライブラリ
+├── README.md
+└── architecture                  ← この構成概要ファイル（テキスト or 図）
+
+
+■処理フロー
+入力ファイル（PDF, DOCX, PPTX, XLSX, 画像, 音声 など）
+   ↓
+[Streamlit UI] ← ユーザーがファイルをアップ＆質問入力
+   ↓ HTTP POST
+[FastAPI サーバー]
+   ├─ uploads/ にファイル保存
+   ├─ extractors.router.py がファイル拡張子に応じて読み取り
+   │     ├─ PDF: pdf_loader
+   │     ├─ Word: docx_loader
+   │     ├─ Excel: xlsx_loader
+   │     ├─ PowerPoint: pptx_loader
+   │     ├─ 画像: image_ocr（OCRで文字抽出）
+   │     └─ 音声: audio_transcriber（Whisperで文字起こし）
+   ↓
+[core.qa_chain.py]
+   └─ contextとして文書内容を渡して質問
+   ↓
+[services.groq_api.py]
+   └─ Groq API (LLM) に問い合わせ
+   ↓
+   日本語で回答
+   ↓
+[Streamlit UI に結果表示]
