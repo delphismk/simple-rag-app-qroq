@@ -1,0 +1,36 @@
+# --- FastAPIサーバー ---
+fastapi
+uvicorn
+
+# --- UI（Streamlit）---
+streamlit
+requests
+
+# --- LLM & ベクトルDB ---
+langchain
+langchain-community
+chromadb
+sentence-transformers
+
+# --- Groq API 利用 ---
+python-dotenv  # .env読み込み
+httpx          # requestsより高速（任意）
+
+# --- PDF処理 ---
+PyMuPDF        # fitz (PDF読み込みに最適)
+PyPDF2         # ページ単位抽出用（補完）
+
+# --- Officeファイル処理 ---
+python-docx    # .docx読み取り
+python-pptx    # .pptx読み取り
+openpyxl       # .xlsx読み取り
+
+# --- 画像・OCR ---
+pillow         # 画像読み込み
+pytesseract    # OCR（Tesseract依存）
+
+# --- 音声・文字起こし ---
+whisper        # OpenAIの音声認識（または faster-whisper）
+
+# --- その他ユーティリティ ---
+tqdm           # 進捗表示（オプション）
